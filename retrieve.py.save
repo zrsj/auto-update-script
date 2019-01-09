@@ -1,0 +1,6 @@
+#!/usr/bin/python3
+import psycopg2;
+import sys;
+
+def main():https://github.com/zrsj/auto-update-script.git
+conn = psycopg2.connect("dbname=northwind user=postgres password=postgres");
