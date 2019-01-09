@@ -9,8 +9,10 @@ def main():
 	conn = psycopg2.connect(conn_str)
 	cursor = conn.cursor()
 	print("Connected!")
-	cursor.execute("SELECT * from employees")
-	rec = cursor.fetchall()
-	pprint.pprint(rec)
+	conn.set_session(autocommit=True)
+	with open("/home/uniwork/workforce/app1/sql/query.sql") as file:
+		for line in file:
+			str = file.read()
+			cursor.execute(str)
 if __name__ == "__main__":
 	main() 

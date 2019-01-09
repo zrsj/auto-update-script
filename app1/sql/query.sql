@@ -1,3 +1,3 @@
-CREATE TABLE retvals;
-SELECT * INTO TABLE retvals
-FROM categories;
+CREATE TABLE retval
+SELECT * INTO TABLE retval
+FROM categories
