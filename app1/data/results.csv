@@ -1,0 +1,17 @@
+category_id,category_name,description,picture,region_id,region_description
+2,Condiments,"Sweet and savory sauces, relishes, spreads, and seasonings",\x,1,Eastern
+2,Condiments,"Sweet and savory sauces, relishes, spreads, and seasonings",\x,2,Western
+2,Condiments,"Sweet and savory sauces, relishes, spreads, and seasonings",\x,3,Northern
+2,Condiments,"Sweet and savory sauces, relishes, spreads, and seasonings",\x,4,Southern
+4,Dairy Products,Cheeses,\x,1,Eastern
+4,Dairy Products,Cheeses,\x,2,Western
+4,Dairy Products,Cheeses,\x,3,Northern
+4,Dairy Products,Cheeses,\x,4,Southern
+6,Meat/Poultry,Prepared meats,\x,1,Eastern
+6,Meat/Poultry,Prepared meats,\x,2,Western
+6,Meat/Poultry,Prepared meats,\x,3,Northern
+6,Meat/Poultry,Prepared meats,\x,4,Southern
+8,Seafood,Seaweed and fish,\x,1,Eastern
+8,Seafood,Seaweed and fish,\x,2,Western
+8,Seafood,Seaweed and fish,\x,3,Northern
+8,Seafood,Seaweed and fish,\x,4,Southern
