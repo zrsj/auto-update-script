@@ -1,9 +1,7 @@
 #!/usr/bin/python3
 import psycopg2
 import sys
-import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
-from threading import Timer
 
 def query_exec(conn_str, query_direc, data_direc):
 	conn = psycopg2.connect(conn_str)
@@ -12,10 +10,12 @@ def query_exec(conn_str, query_direc, data_direc):
 	str = ""
 	with open(query_direc, "r") as ifile:
 		for line in ifile:
+			if line == '\n':
+				outquer = "COPY ({0}) TO STDOUT WITH CSV HEADER".format(str)
+				with open(data_direc, "w") as ofile:
+					cursor.copy_expert(outquer, ofile)
+				str = ""
 			str += line
-	outquer = "COPY ({0}) TO STDOUT WITH CSV HEADER".format(str)
-	with open(data_direc, "w") as ofile:
-		cursor.copy_expert(outquer, ofile)
 	conn.close()
 
 def script_run():
@@ -26,17 +26,17 @@ def script_run():
 	odir1 = "/home/uniwork/workforce/app1/data/results.csv"
 	odir2 = "/home/uniwork/workforce/app2/data/results.csv"
 	odir3 = "/home/uniwork/workforce/app3/data/results.csv"
-	print("Beginning execution...")
 	try:
 		query_exec(conn_str, idir1, odir1)
+		query_exec(conn_str, idir2, odir2)
+		query_exec(conn_str, idir3, odir3)
 	except:
 		print("ERROR: execution failure")
-	print("Execution succesfully completed. Data CSV files created.")
 
 def main():
 	script_run();
 	sched = BlockingScheduler()
-	sched.add_job(script_run, 'cron', day='*', hour=16, minute=41)
+	sched.add_job(script_run, 'cron', year='*', month='*',  day='*', hour=7, minute=00)
 	try:
 		sched.start()
 	except (KeyboardInterrupt, SystemExit):
