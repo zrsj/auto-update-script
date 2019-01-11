@@ -15,3 +15,11 @@ category_id,category_name,description,picture,region_id,region_description
 8,Seafood,Seaweed and fish,\x,2,Western
 8,Seafood,Seaweed and fish,\x,3,Northern
 8,Seafood,Seaweed and fish,\x,4,Southern
+10,Swords,A ceremonial sword used for knighting rituals. Not made for combat.,\x,1,Eastern
+10,Swords,A ceremonial sword used for knighting rituals. Not made for combat.,\x,2,Western
+10,Swords,A ceremonial sword used for knighting rituals. Not made for combat.,\x,3,Northern
+10,Swords,A ceremonial sword used for knighting rituals. Not made for combat.,\x,4,Southern
+12,Spears,A ceremonial spear used by the church. God knows what for.,\x,1,Eastern
+12,Spears,A ceremonial spear used by the church. God knows what for.,\x,2,Western
+12,Spears,A ceremonial spear used by the church. God knows what for.,\x,3,Northern
+12,Spears,A ceremonial spear used by the church. God knows what for.,\x,4,Southern
