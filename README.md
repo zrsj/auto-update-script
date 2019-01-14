@@ -3,5 +3,5 @@ Automatically updates existing CSV files with new data retrieved via a python sc
 year that the script continues to run.
 
 TODO:
-  *Connect direclty to database from the app within the code subdirectory 
-  *Investigate the effects of having a blocking type scheduler implemented
+  *Connect directly to database from the app within the code subdirectory 
+  *Create unit file for systemd
