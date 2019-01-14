@@ -1,7 +1,16 @@
 #!/usr/bin/python3
 import psycopg2
 import sys
+import xml.etree.ElementTree as ET
+import os
 from apscheduler.schedulers.blocking import BlockingScheduler
+
+def parse_dbconfig(filenm='config.xml'):
+	tree = ET.parse(filenm)
+	root = tree.getroot()
+	for child in root:
+		confvals = [root.find('host').text, root.find('dbname').text, root.find('user').text, root.find('password').text]
+	return(confvals)
 
 def query_exec(conn_str, query_direc, data_direc):
 	conn = psycopg2.connect(conn_str)
@@ -16,19 +25,21 @@ def query_exec(conn_str, query_direc, data_direc):
 	conn.close()
 
 def script_run(rootdir = "./workforce"):
-	conn_str = "host='localhost' dbname='northwind' user='postgres' password='admin'"
-	idir1 = rootdir + "/app1/sql/query.sql"
-	idir2 = rootdir + "/app2/sql/query.sql"
-	idir3 = rootdir + "/app3/sql/query.sql"
-	odir1 = rootdir + "/app1/data/results.csv"
-	odir2 = rootdir + "/app2/data/results.csv"
-	odir3 = rootdir + "/app3/data/results.csv"
+	conn_vals = parse_dbconfig()
+	conn_str = "host='{}' dbname='{}' user='{}' password='{}'".format(conn_vals[0], conn_vals[1], conn_vals[2], conn_vals[3])
+	folders = next(os.walk(rootdir))[1]
+	folders.remove(".git")
+	idirs = []
+	odirs = []
+	for x in folders:
+		idirs.append(rootdir + "/{0}/sql/query.sql".format(x))
+		odirs.append(rootdir + "/{0}/data/data.csv".format(x))
 	try:
-		query_exec(conn_str, idir1, odir1)
-		query_exec(conn_str, idir2, odir2)
-		query_exec(conn_str, idir3, odir3)
+		for x in range(len(folders)):
+			query_exec(conn_str, idirs[x], odirs[x])
 	except:
 		print("ERROR: execution failure")
+	print("Executed successfully")
 
 def main():
 	try:
