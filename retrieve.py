@@ -1,15 +1,14 @@
 #!/usr/bin/python3
 import psycopg2
 import sys
-import xml.etree.ElementTree as ET
+import pytoml as toml
 import os
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-def parse_dbconfig(filenm='config.xml'):
-	tree = ET.parse(filenm)
-	root = tree.getroot()
-	for child in root:
-		confvals = [root.find('host').text, root.find('dbname').text, root.find('user').text, root.find('password').text]
+def parse_dbconfig(filenm='config.toml'):
+	data = toml.load(open('config.toml'))
+	vals = data['database']
+	confvals = [vals['host'], vals['dbname'], vals['user'], vals['password']]
 	return(confvals)
 
 def query_exec(conn_str, query_direc, data_direc):
@@ -42,12 +41,11 @@ def script_run(rootdir = "./workforce"):
 	print("Executed successfully")
 
 def main():
-	try:
-		script_run(sys.argv[1]);
-	except:
-		script_run();
 	sched = BlockingScheduler()
-	sched.add_job(script_run, 'cron', year='*', month='*',  day='*', hour=7, minute=00)
+	try:
+		sched.add_job(script_run, 'cron', year='*', month='*',  day='*', hour=15, minute=16, args=[sys.argv[1]])
+	except:
+		sched.add_job(script_run, 'cron', year='*', month='*', day='*', hour=7, minute=00)
 	try:
 		sched.start()
 	except (KeyboardInterrupt, SystemExit):
