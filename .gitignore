@@ -1,1 +1,3 @@
-**/results.csv
+*.csv
+config.xml
+test.py
