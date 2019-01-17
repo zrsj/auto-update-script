@@ -3,6 +3,7 @@ import psycopg2
 import sys
 import pytoml as toml
 import os
+from folder import folder
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 def parse_dbconfig(filenm='config.toml'):
@@ -26,24 +27,44 @@ def query_exec(conn_str, query_direc, data_direc):
 def script_run(rootdir = "./workforce"):
 	conn_vals = parse_dbconfig()
 	conn_str = "host='{}' dbname='{}' user='{}' password='{}'".format(conn_vals[0], conn_vals[1], conn_vals[2], conn_vals[3])
-	folders = next(os.walk(rootdir))[1]
-	folders.remove(".git")
+	foldernames = next(os.walk(rootdir))[1]
+	foldernames.remove(".git")
+	foldernames.sort()
 	idirs = []
 	odirs = []
-	for x in folders:
-		idirs.append(rootdir + "/{0}/sql/query.sql".format(x))
-		odirs.append(rootdir + "/{0}/data/data.csv".format(x))
+	for x in foldernames:
+		#idirs.append(rootdir + "/{0}/sql/query.sql".format(x))
+		if x.startswith("app"):
+			ifolder = folder(rootdir + "/{0}/sql/".format(x))
+			ofolder = folder(rootdir + "/{0}/data/data.csv".format(x))
+			idirs.append(ifolder)
+			odirs.append(ofolder)
+		#odirs.append(rootdir + "/{0}/data/".format(x))
+	for x in idirs:
+		f = []
+		try:
+			f = next(os.walk(x.dirnm))[2]
+		except StopIteration:
+			pass
+		for y in f:
+			if y.endswith(".sql"):
+				x.add_file(y)
 	try:
-		for x in range(len(folders)):
-			query_exec(conn_str, idirs[x], odirs[x])
-	except:
-		print("ERROR: execution failure")
-	print("Executed successfully")
+		for x, y in zip(idirs, odirs):
+				for z in x.files:
+					query_exec(conn_str, z, y.dirnm)
+					print("Completed successfully!")
+	except FileNotFoundError as e:
+		print("NOTE: {0}".format(str(e)))
+		print("If a query should exist within this dir, filepath must match")
+	#except Exception as e:
+	#	print("FAILURE: {0}".format(str(e)))
 
 def main():
+	script_run(sys.argv[1])
 	sched = BlockingScheduler()
 	try:
-		sched.add_job(script_run, 'cron', year='*', month='*',  day='*', hour=15, minute=16, args=[sys.argv[1]])
+		sched.add_job(script_run, 'cron', year='*', month='*',  day='*', hour=9, minute=3, args=[sys.argv[1]])
 	except:
 		sched.add_job(script_run, 'cron', year='*', month='*', day='*', hour=7, minute=00)
 	try:
