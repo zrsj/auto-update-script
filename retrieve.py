@@ -39,11 +39,10 @@ def script_run(rootdir = "./workforce"):
 	odirs = []
 	for x in foldernames:
 		#idirs.append(rootdir + "/{0}/sql/query.sql".format(x))
-		if x.startswith("app"):
-			ifolder = folder(rootdir + "/{0}/sql/".format(x))
-			ofolder = folder(rootdir + "/{0}/data/".format(x))
-			idirs.append(ifolder)
-			odirs.append(ofolder)
+		ifolder = folder(rootdir + "/{0}/sql/".format(x))
+		ofolder = folder(rootdir + "/{0}/data/".format(x))
+		idirs.append(ifolder)
+		odirs.append(ofolder)
 		#odirs.append(rootdir + "/{0}/data/".format(x))
 	for x, y in zip(idirs, odirs):
 		f = []
@@ -65,14 +64,14 @@ def script_run(rootdir = "./workforce"):
 	except FileNotFoundError as e:
 		print("NOTE: {0}".format(str(e)))
 		print("If a query should exist within this dir, filepath must match")
-	#except Exception as e:
-	#	print("FAILURE: {0}".format(str(e)))
+	except Exception as e:
+		print("FAILURE: {0}".format(str(e)))
 
 def main():
 	script_run(sys.argv[1])
 	sched = BlockingScheduler()
 	try:
-		sched.add_job(script_run, 'cron', year='*', month='*',  day='*', hour=9, minute=3, args=[sys.argv[1]])
+		sched.add_job(script_run, 'cron', year='*', month='*',  day='*', hour=7, minute=0, args=[sys.argv[1]])
 	except:
 		sched.add_job(script_run, 'cron', year='*', month='*', day='*', hour=7, minute=00)
 	try:
