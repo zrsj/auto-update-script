@@ -6,6 +6,11 @@ import os
 from folder import folder
 from apscheduler.schedulers.blocking import BlockingScheduler
 
+def increment_string(string):
+	val = int(string)
+	retval = "0" + str(val + 1) if val < 9 else str(val + 1)
+	return retval
+
 def parse_dbconfig(filenm='config.toml'):
 	data = toml.load(open('config.toml'))
 	vals = data['database']
@@ -36,23 +41,26 @@ def script_run(rootdir = "./workforce"):
 		#idirs.append(rootdir + "/{0}/sql/query.sql".format(x))
 		if x.startswith("app"):
 			ifolder = folder(rootdir + "/{0}/sql/".format(x))
-			ofolder = folder(rootdir + "/{0}/data/data.csv".format(x))
+			ofolder = folder(rootdir + "/{0}/data/".format(x))
 			idirs.append(ifolder)
 			odirs.append(ofolder)
 		#odirs.append(rootdir + "/{0}/data/".format(x))
-	for x in idirs:
+	for x, y in zip(idirs, odirs):
 		f = []
+		fln = "00"
 		try:
 			f = next(os.walk(x.dirnm))[2]
 		except StopIteration:
 			pass
-		for y in f:
-			if y.endswith(".sql"):
-				x.add_file(y)
+		for z in f:
+			if z.endswith(".sql"):
+				x.add_file(z)
+				y.add_file("data{0}.csv".format(fln))
+				fln = increment_string(fln)
 	try:
 		for x, y in zip(idirs, odirs):
-				for z in x.files:
-					query_exec(conn_str, z, y.dirnm)
+				for z, w in zip(x.files, y.files):
+					query_exec(conn_str, z, w)
 					print("Completed successfully!")
 	except FileNotFoundError as e:
 		print("NOTE: {0}".format(str(e)))
