@@ -1,0 +1,40 @@
+#--How this file is to be used (assuming you have nano installed)--
+# IF YOU DO NOT HAVE NANO, INSTALL IT WITH:
+#	sudo apt-get install nano
+# Create a similar file to this using the following command:
+#	sudo nano /lib/systemd/system/servicename.service
+# Where servicename is whatever you want the name of the service to be.
+# Please follow the template unit file below these comments to create your
+# unit file.
+# Once the unit file has been made, give it permissions 644 via this command:
+#	sudo chmod 644 /lib/systemd/system/servicename.service
+# Then execute the following:
+#	sudo systemctl daemon-reload
+#	sudo systemctl enable servicename.service
+# The daemon should now be prepared. You can check this with:
+#	sudo systemctl status servicename.service
+# To create an environment file, you can use the following command:
+#	sudo nano /etc/.progconf
+# You can append arguments in this file (see below instructions)
+#
+#--How to add/modify a command line argument--
+# In order to specify an argument to the command line at runtime, you must provide
+# a special environment file. This file should have a very basic layout e.g.:
+#	ARG1=argument1
+#	ARG2=argument2
+#	ARGn=argumentn
+# (in my case, the file says "ARG1=\home\uniwork\workforce" which specifies rootdir)
+# The environment file location should be given as an absolute filepath and to
+# include the argument in execution, place in ExecStart "$ARGn" with no quotation
+# marks after the filepath to the script (n being argument number)
+[Unit]
+Description=Retrieval python script
+After=multi-user.target
+
+[Service]
+Type=idle
+EnvironmentFile=/etc/.progconf
+ExecStart=/home/uniwork/workforce/retrieve.py $ARG1
+
+[Install]
+WantedBy=multi-user.target
