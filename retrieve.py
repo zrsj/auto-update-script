@@ -18,7 +18,7 @@ def increment_string(string):
 	return retval
 #function parse_dbconfig reads in database configuration information from a
 #config file using toml
-def parse_dbconfig(filenm='/home/uniwork/workforce/config.toml'):
+def parse_dbconfig(filenm='config.toml'):
 	data = toml.load(open(filenm))
 	vals = data['database']
 	confvals = [vals['host'], vals['dbname'], vals['user'], vals['password']]
@@ -41,7 +41,10 @@ def query_exec(conn_str, query_direc, data_direc):
 #an argument and then uses this to crawl directories for folder names. These
 #folders are turned into abstract folder objects and stored in arrays
 def script_run(rootdir = "./workforce"):
-	conn_vals = parse_dbconfig()
+	try:
+		conn_vals = parse_dbconfig(rootdir + '/config.toml')
+	except:
+		conn_vals = parse_dbconfig()
 	conn_str = "host='{}' dbname='{}' user='{}' password='{}'".format(conn_vals[0], conn_vals[1], conn_vals[2], conn_vals[3])
 	foldernames = next(os.walk(rootdir))[1]
 	foldernames.remove(".git")
@@ -94,7 +97,7 @@ def main():
 	thread.start()
 	sched = BlockingScheduler()
 	try:
-		sched.add_job(script_run, 'cron', year='*', month='*',  day='*', hour=7, minute=0, args=[sys.argv[1]])
+		sched.add_job(script_run, 'cron', year='*', month='*',  day='*', hour=15, minute=12, args=[sys.argv[1]])
 	except:
 		sched.add_job(script_run, 'cron', year='*', month='*', day='*', hour=7, minute=0)
 	try:
