@@ -1,4 +1,6 @@
+__pycache__
 config.toml
 *.csv
+*.sql
 config.xml
 test.py
