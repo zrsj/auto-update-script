@@ -6,7 +6,7 @@ import psycopg2 #postgres driver for executing sql
 import sys #currently used for command line arguments
 import pytoml as toml #used to read in database config file
 import os #used to crawl through directories and retrieve folder names
-import threading
+import threading #anytime_exec daemon runs on a thread
 from folder import folder #folder class, see folder.py for details
 from apscheduler.schedulers.blocking import BlockingScheduler #scheduler
 #function increment_string() takes in a string that resembles an integer,
@@ -18,8 +18,8 @@ def increment_string(string):
 	return retval
 #function parse_dbconfig reads in database configuration information from a
 #config file using toml
-def parse_dbconfig(filenm='config.toml'):
-	data = toml.load(open('config.toml'))
+def parse_dbconfig(filenm='/home/uniwork/workforce/config.toml'):
+	data = toml.load(open(filenm))
 	vals = data['database']
 	confvals = [vals['host'], vals['dbname'], vals['user'], vals['password']]
 	return(confvals)
@@ -49,10 +49,8 @@ def script_run(rootdir = "./workforce"):
 	idirs = []
 	odirs = []
 	for x in foldernames:
-		ifolder = folder(rootdir + "/{0}/sql/".format(x))
-		ofolder = folder(rootdir + "/{0}/data/".format(x))
-		idirs.append(ifolder)
-		odirs.append(ofolder)
+		idirs.append(folder(rootdir + "/{0}/sql/".format(x)))
+		odirs.append(folder(rootdir + "/{0}/data/".format(x)))
 	for x, y in zip(idirs, odirs):
 		f = []
 		fln = "00"
@@ -83,9 +81,14 @@ class anytime_exec(threading.Thread):
 		character = input()
 		while character != 'e':
 			if character == 'n':
-				script_run(sys.argv[1])
-				character = input()
+				try:
+					script_run(sys.argv[1])
+					character = input()
+				except:
+					script_run()
+					character = input()
 		print("Anytime execution daemon terminated. Scheduler still runs.")
+
 def main():
 	thread = anytime_exec(name = "th", daemon=True)
 	thread.start()
@@ -93,7 +96,7 @@ def main():
 	try:
 		sched.add_job(script_run, 'cron', year='*', month='*',  day='*', hour=7, minute=0, args=[sys.argv[1]])
 	except:
-		sched.add_job(script_run, 'cron', year='*', month='*', day='*', hour=7, minute=00)
+		sched.add_job(script_run, 'cron', year='*', month='*', day='*', hour=7, minute=0)
 	try:
 		sched.start()
 	except (KeyboardInterrupt, SystemExit):
