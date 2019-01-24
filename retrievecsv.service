@@ -34,7 +34,7 @@ After=multi-user.target
 [Service]
 Type=idle
 EnvironmentFile=/etc/.progconf
-ExecStart=/home/uniwork/workforce/retrieve.py $ARG1
+ExecStart=<FILEPATH_TO_SCRIPT>/retrieve.py $ARG1
 
 [Install]
 WantedBy=multi-user.target

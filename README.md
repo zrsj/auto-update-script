@@ -4,4 +4,3 @@ year that the script continues to run.
 
 TODO:
   * Connect directly to database from the app within the code subdirectory 
-  * Create unit file for systemd
