@@ -6,7 +6,6 @@ import psycopg2 #postgres driver for executing sql
 import sys #currently used for command line arguments
 import pytoml as toml #used to read in database config file
 import os #used to crawl through directories and retrieve folder names
-import threading #anytime_exec daemon runs on a thread
 from folder import folder #folder class, see folder.py for details
 from apscheduler.schedulers.blocking import BlockingScheduler #scheduler
 #function increment_string() takes in a string that resembles an integer,
@@ -77,27 +76,10 @@ def script_run(rootdir = "./workforce"):
 	except Exception as e:
 		print("FAILURE: {0}".format(str(e)))
 
-class anytime_exec(threading.Thread):
-	def run(self):
-		print("Will execute at any time upon entering 'n'.")
-		print("This daemon will terminate upon entering 'e'.")
-		character = input()
-		while character != 'e':
-			if character == 'n':
-				try:
-					script_run(sys.argv[1])
-					character = input()
-				except:
-					script_run()
-					character = input()
-		print("Anytime execution daemon terminated. Scheduler still runs.")
-
 def main():
-	thread = anytime_exec(name = "th", daemon=True)
-	thread.start()
 	sched = BlockingScheduler()
 	try:
-		sched.add_job(script_run, 'cron', year='*', month='*',  day='*', hour=15, minute=12, args=[sys.argv[1]])
+		sched.add_job(script_run, 'cron', year='*', month='*',  day='*', hour=7, minute=0, args=[sys.argv[1]])
 	except:
 		sched.add_job(script_run, 'cron', year='*', month='*', day='*', hour=7, minute=0)
 	try:
